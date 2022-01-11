@@ -1,26 +1,21 @@
 using namespace vex;
 
 extern brain Brain;
-
 extern competition Competition;
-
 extern controller user;
 
 /* DRIVE MOTORS */
-extern motor FL;
-extern motor FR;
-extern motor BL;
-extern motor BR;
+extern motor FL, FR;
+extern motor BL, BR;
 
 /* 4-BAR */
-extern motor barA;
-extern motor barB;
+extern motor barA, barB;
 
-/* MOGO CLAMP*/
+/* MOGO CLAMP */
 extern motor grip;
 
-/* MOGO HOLDER */
-extern motor carry;
+/* MOGO CLAW */
+extern motor claw;
 
 /* MOTOR GROUPS */
 extern motor_group driveBase;
