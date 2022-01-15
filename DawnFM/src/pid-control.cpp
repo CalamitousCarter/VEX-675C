@@ -3,13 +3,13 @@
 using namespace vex;
 
 // === Settings === 
-double kP = 0.4;
-double kI = 0.0;
-double kD = 0.25;
+double kP = 0.45;
+double kI = 0.001;
+double kD = 0.55;
 
-double kPT = 0.23;
-double kIT = 0.0;
-double kDT = 0.025;
+double kPT = 0.20;
+double kIT = 0.0005;
+double kDT = 0.045;
 
 // === Autonomous Settings ===
 int desiredDriveVal = 0;
@@ -30,9 +30,10 @@ bool enableDrivePID = false;
 bool enableTurnPID = false;
 bool resetDriveSensors = false;
 
-float driveSConst = 1.0;
-float turnSConst = 0.8;
-float maxPow = 11.05f;
+float driveLConst = .93;
+float driveRConst = .98;
+float turnLConst = .975;
+float turnRConst = .975;
 
 int drivePID(){
   while(enableDrivePID ){ 
@@ -51,7 +52,7 @@ int drivePID(){
     // Lateral PID
     if(desiredDriveVal != 0 && desiredTurnVal == 0){
       // Get average of motors
-      int avgPos = (LFPos - RFPos)/-2;
+      int avgPos = (int) round((LFPos - RFPos)/-2.0);
       
       user.Screen.clearScreen();
       user.Screen.setCursor(1, 1);
@@ -65,20 +66,19 @@ int drivePID(){
       // Integral
       totalError += error;
 
-      double lateralMotorPower = 
-          fmin(12, (error * kP + derivative * kD + totalError * kI)/12);
+      double lateralMotorPower = (error * kP + derivative * kD + totalError * kI)/12;
 
-      FL.spin(reverse, fmin(maxPow,lateralMotorPower) * driveSConst, volt);
-      FR.spin(forward, lateralMotorPower * driveSConst, volt);
-      BL.spin(forward, fmin(maxPow,lateralMotorPower) * driveSConst, volt);
-      BR.spin(reverse, lateralMotorPower * driveSConst, volt);
+      FL.spin(reverse, lateralMotorPower * driveLConst, volt);
+      FR.spin(forward, lateralMotorPower * driveRConst, volt);
+      BL.spin(forward, lateralMotorPower * driveLConst, volt);
+      BR.spin(reverse, lateralMotorPower * driveRConst, volt);
 
       prevError = error;
       task::sleep(20);
     }
     // Turn PID
     else if(desiredDriveVal == 0 && desiredTurnVal != 0){
-      int turnDiff = (LFPos + RFPos)/2;
+      int turnDiff = (int) round((LFPos + RFPos)/2.0);
 
       user.Screen.clearScreen();
       user.Screen.setCursor(1, 1);
@@ -92,13 +92,12 @@ int drivePID(){
       // Integral
       totalErrorT += errorT;
 
-      double turnMotorPower =
-          fmin(12, (errorT * kPT) + (derivativeT * kDT) + (totalErrorT * kIT));
+      double turnMotorPower = (errorT * kPT) + (derivativeT * kDT) + (totalErrorT * kIT)/12;
 
-      FL.spin(reverse, fmin(maxPow, (turnMotorPower)) * turnSConst, percent);
-      FR.spin(reverse, (turnMotorPower) * turnSConst, percent);
-      BL.spin(forward, fmin(maxPow, (turnMotorPower)) * turnSConst, percent);
-      BR.spin(forward, (turnMotorPower) * turnSConst, percent);
+      FL.spin(reverse, turnMotorPower * turnLConst, percent);
+      FR.spin(reverse, (turnMotorPower) * turnRConst, percent);
+      BL.spin(forward, (turnMotorPower) * turnLConst, percent);
+      BR.spin(forward, (turnMotorPower) * turnRConst, percent);
 
       prevErrorT = errorT;
       task::sleep(20);

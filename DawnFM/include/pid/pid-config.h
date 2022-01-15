@@ -25,8 +25,9 @@ extern int derivativeT;
 extern bool enableDrivePID;
 extern bool resetDriveSensors;
 
-extern float driveSConst;
-extern float turnSConst;
-extern float maxPow;
+extern float driveLConst;
+extern float driveRConst;
+extern float turnLConst;
+extern float turnRConst;
 
 extern int drivePID();

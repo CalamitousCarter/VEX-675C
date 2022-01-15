@@ -17,7 +17,7 @@ motor barA = vex::motor(PORT13, false);
 motor barB = vex::motor(PORT5, true);
 
 /* MOGO CLAMP */
-motor grip = vex::motor(PORT8, false);
+motor grip = vex::motor(PORT4, false);
 
 /* MOGO HOLDER */
 motor claw = vex::motor(PORT10, false);
